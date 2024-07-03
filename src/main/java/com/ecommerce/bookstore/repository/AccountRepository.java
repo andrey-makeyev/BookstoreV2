@@ -1,2 +1,10 @@
-package com.ecommerce.bookstore.repository;public interface AccountRepository {
+package com.ecommerce.bookstore.repository;
+
+import com.ecommerce.bookstore.model.Account;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AccountRepository extends JpaRepository<Account, Long> {
+    Account findByUserName(String userName);
 }

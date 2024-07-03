@@ -9,16 +9,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class AccountService implements UserDetailsService {
+@Component
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private final AccountRepository accountRepository;
 
     @Autowired
-    private AccountRepository accountRepository;
+    public UserDetailsServiceImpl(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -26,8 +30,7 @@ public class AccountService implements UserDetailsService {
         System.out.println("Account= " + account);
 
         if (account == null) {
-            throw new UsernameNotFoundException("UserName "
-                    + username + " was not found");
+            throw new UsernameNotFoundException("UserName " + username + " was not found");
         }
 
         String role = account.getUserRole();

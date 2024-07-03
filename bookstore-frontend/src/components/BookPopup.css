@@ -1,0 +1,16 @@
+.popup-content {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.popup-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.popup-footer {
+    margin-top: 20px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+}

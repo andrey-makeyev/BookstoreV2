@@ -1,1 +1,33 @@
-spring.application.name=Bookstore
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookstore
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      auto-commit: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.format_sql: true  # Форматирование SQL запросов
+      hibernate.use_sql_comments: true  # Комментарии в SQL
+      current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/init.sql
+logging:
+  level:
+    root: info
+    org.springframework: debug
+    org.hibernate.SQL: debug  # Логирование SQL запросов
+    org.hibernate.type.descriptor.sql.BasicBinder: trace  # Логирование параметров SQL
+    com.ecommerce.bookstore: debug  # Логирование вашего приложения
+jwt:
+  secret: bLsCd/entvgZ3XBOU6F8tDMTBK1bpg3Yhwe2ac1VIO6eopOZdOYDqg3TwTaTS7jiRmuoy+BKnw48NioDv/ooAQ==
+  expiration: 604800000  # 7 days in milliseconds
+image:
+  base-path: src/main/resources/static/images

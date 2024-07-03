@@ -1,41 +1,47 @@
-package com.ecommerce.bookstore.entity;
+package com.ecommerce.bookstore.model;
+
+import lombok.Data;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import java.sql.Types;
+
+@Data
 @Entity
-@Table(name = "books")
-public class Book implements Serializable {
+@Table(name = "book")
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    private Long id;
 
-    @Column(name = "isbn", length = 20, nullable = false)
+    @Column(nullable = false)
     private String isbn;
 
-    @Column(name = "title", length = 128, nullable = false)
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "author", length = 50, nullable = false)
+    @Column(nullable = false)
     private String author;
 
-    @Column(name = "publisher", length = 128, nullable = false)
+    @Column(nullable = false)
     private String publisher;
 
-    @Column(name = "year", nullable = false)
+    @Column(nullable = false)
     private Integer year;
 
-    @Column(name = "description", length = 255, nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "price", nullable = false)
+    @Column(nullable = false)
     private double price;
 
-    @Lob
-    @Column(columnDefinition = "MEDIUMBLOB", name = "image", nullable = true)
-    private String image;
+    @JdbcTypeCode(Types.VARBINARY)
+    @Column(name = "image", columnDefinition = "bytea")
+    private byte[] image;
 
-    // Getters and setters...
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 }

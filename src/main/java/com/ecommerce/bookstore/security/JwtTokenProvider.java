@@ -1,31 +1,49 @@
-package com.ecommerce.bookstore.service;
+package com.ecommerce.bookstore.security;
 
-import com.ecommerce.bookstore.model.Account;
-import com.ecommerce.bookstore.repository.AccountRepository;
-import com.ecommerce.bookstore.security.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class AccountService {
+import java.util.Date;
 
-    @Autowired
-    private AccountRepository accountRepository;
+@Component
+public class JwtTokenProvider {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    @Value("${jwt.expiration}")
+    private int jwtExpirationInMs;
 
-    public void saveAccount(Account account) {
-        account.setPasswordHash(passwordEncoder.encode(account.getPasswordHash()));
-        accountRepository.save(account);
+    public String createToken(Authentication authentication) {
+        String username = authentication.getName();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
     }
 
-    public String generateToken(Authentication authentication) {
-        return jwtTokenProvider.createToken(authentication);
+    public String getUsernameFromJWT(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public boolean validateToken(String authToken) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            return true;
+        } catch (SignatureException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
+            // Handle exceptions
+        }
+        return false;
     }
 }
